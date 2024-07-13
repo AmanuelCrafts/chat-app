@@ -15,7 +15,7 @@ import upload from "../../lib/upload";
 import { format } from "timeago.js";
 
 const Chat = () => {
-  const [chat, setChat] = useState();
+  const [chat, setChat] = useState(null);
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [img, setImg] = useState({
@@ -30,8 +30,10 @@ const Chat = () => {
   const endRef = useRef(null);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chat.messages]);
+    if (chat) {
+      endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chat]);
 
   useEffect(() => {
     const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
@@ -68,7 +70,7 @@ const Chat = () => {
       }
 
       await updateDoc(doc(db, "chats", chatId), {
-        message: arrayUnion({
+        messages: arrayUnion({
           senderId: currentUser.id,
           text,
           createdAt: new Date(),
